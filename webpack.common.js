@@ -1,6 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: 'none',
@@ -94,6 +95,9 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
+    }),
+    new Dotenv({
+      path: './.env', // default is .env
     }),
   ],
 };
