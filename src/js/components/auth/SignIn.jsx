@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import {
   Grid, Typography, Card, CardContent,
 } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import { useMutation } from 'react-query';
+import { useHistory } from 'react-router-dom';
 
+import SignUpDialog from './SignUpDialog';
 import { api, setToken } from '../../helpers/axios';
 
 const Container = styled(Card)({
@@ -13,19 +15,27 @@ const Container = styled(Card)({
 });
 
 const SignIn = () => {
+  const history = useHistory();
   const [errorMessage, setErrorMessage] = useState('');
+  const [openSignUp, setOpenSignUp] = useState('');
+  const [providerAccessToken, setProviderAccessToken] = useState('');
+
+  const handleClose = useCallback(() => {
+    setOpenSignUp(false);
+  }, []);
 
   const {
     isLoading, error, data, mutate: signIn,
-  } = useMutation(async (providerAccessToken) => {
+  } = useMutation(async (accessToken) => {
     const res = await api.post('/sign-in', {
       providerName: 'GOOGLE',
-      providerAccessToken,
+      providerAccessToken: accessToken,
     });
     return res.data;
   });
 
   const handleSignIn = (response) => {
+    setProviderAccessToken(response.accessToken);
     signIn(response.accessToken);
   };
 
@@ -33,9 +43,17 @@ const SignIn = () => {
     if (error) setErrorMessage(error.message);
   }, [error]);
 
+  useEffect(() => {
+    if (data) {
+      if (data.hasAccount === false) {
+        setOpenSignUp(true);
+      }
+    }
+  }, [data, history]);
+
   if (data && data.accessToken) {
     setToken(data.accessToken);
-    window.location.href = '/';
+    history.push('/');
   }
 
   return (
@@ -49,7 +67,7 @@ const SignIn = () => {
         >
           <Grid item>
             <Typography align="center" color="primary">
-              AMELA
+              My Social Net Work
             </Typography>
           </Grid>
 
@@ -67,6 +85,12 @@ const SignIn = () => {
           </Grid>
         </Grid>
       </CardContent>
+
+      <SignUpDialog
+        open={openSignUp}
+        handleClose={handleClose}
+        providerAccessToken={providerAccessToken}
+      />
     </Container>
   );
 };
