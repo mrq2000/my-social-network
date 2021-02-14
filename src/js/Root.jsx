@@ -6,6 +6,9 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DayjsUtils from '@date-io/dayjs';
 import { SnackbarProvider } from 'notistack';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
+
+import theme from '../theme';
 
 import PrivateRoute from './PrivateRoute';
 import Home from './pages/Home';
@@ -31,14 +34,16 @@ const Root = () => (
   <QueryClientProvider client={queryClient}>
     <MuiPickersUtilsProvider utils={DayjsUtils}>
       <SnackbarProvider maxSnack={3}>
-        <BrowserRouter>
-          <div>
-            {Router}
-          </div>
-        </BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+            <div>
+              {Router}
+            </div>
+          </BrowserRouter>
 
-        <CssBaseline />
-        <ReactQueryDevtools initialIsOpen={false} />
+          <CssBaseline />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </ThemeProvider>
       </SnackbarProvider>
     </MuiPickersUtilsProvider>
   </QueryClientProvider>
