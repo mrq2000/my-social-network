@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DayjsUtils from '@date-io/dayjs';
 import { SnackbarProvider } from 'notistack';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import PrivateRoute from './PrivateRoute';
 import Home from './pages/Home';
@@ -36,6 +37,7 @@ const Root = () => (
           </div>
         </BrowserRouter>
 
+        <CssBaseline />
         <ReactQueryDevtools initialIsOpen={false} />
       </SnackbarProvider>
     </MuiPickersUtilsProvider>

@@ -1,18 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleLogin } from 'react-google-login';
-import {
-  Grid, Typography, Card, CardContent,
-} from '@material-ui/core';
-import { styled } from '@material-ui/styles';
+import { Typography } from '@material-ui/core';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 
 import SignUpDialog from './SignUpDialog';
 import { api, setToken } from '../../helpers/axios';
-
-const Container = styled(Card)({
-  width: '30rem',
-});
 
 const SignIn = () => {
   const history = useHistory();
@@ -57,41 +50,24 @@ const SignIn = () => {
   }
 
   return (
-    <Container>
-      <CardContent>
-        <Grid
-          container
-          direction="column"
-          alignItems="center"
-          spacing={3}
-        >
-          <Grid item>
-            <Typography align="center" color="primary">
-              My Social Net Work
-            </Typography>
-          </Grid>
+    <>
+      <GoogleLogin
+        clientId={process.env.GOOGLE_CLIENT_ID}
+        buttonText="Sign In With Google"
+        onSuccess={(response) => handleSignIn(response)}
+        disabled={isLoading}
+      />
 
-          <Grid item>
-            <GoogleLogin
-              clientId={process.env.GOOGLE_CLIENT_ID}
-              buttonText="Sign In With Google"
-              onSuccess={(response) => handleSignIn(response)}
-              disabled={isLoading}
-            />
-
-            <Typography align="center" color="error">
-              {errorMessage}
-            </Typography>
-          </Grid>
-        </Grid>
-      </CardContent>
+      <Typography align="center" color="error">
+        {errorMessage}
+      </Typography>
 
       <SignUpDialog
         open={openSignUp}
         handleClose={handleClose}
         providerAccessToken={providerAccessToken}
       />
-    </Container>
+    </>
   );
 };
 
