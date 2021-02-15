@@ -87,6 +87,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/assets/index.html',
+      favicon: 'src/assets/img/favicon.ico',
     }),
     new HtmlWebpackPlugin({
       filename: 'robots.txt',
@@ -97,7 +98,7 @@ module.exports = {
       filename: 'css/[name].css',
     }),
     new Dotenv({
-      path: './.env', // default is .env
+      path: './.env',
     }),
   ],
 };

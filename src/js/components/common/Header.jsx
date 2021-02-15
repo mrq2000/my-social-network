@@ -31,6 +31,16 @@ const useStyles = makeStyles((theme) => ({
   logo: {
     width: '20%',
   },
+  avatar: {
+    marginRight: theme.spacing(2),
+
+    height: '3rem',
+    width: '3rem',
+    objectFit: 'cover',
+
+    backgroundColor: '#d4d0d5',
+    borderRadius: '100%',
+  },
 }));
 
 const Header = ({ user }) => {
@@ -50,6 +60,8 @@ const Header = ({ user }) => {
         <img src={logo} alt="my-social-network-logo" className={classes.logo} />
 
         <div className={classes.flex} />
+
+        <img src={`data:image/jpeg;base64,${user.avatar}`} alt="my-social-network-logo" className={classes.avatar} />
 
         <Typography variant="body1" className={classes.userName}>Hi! {user.full_name}</Typography>
         <Tooltip title="Sign Out">

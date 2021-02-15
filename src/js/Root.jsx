@@ -15,7 +15,7 @@ import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 
 const queryClient = new QueryClient({
-  defaultConfig: {
+  defaultOptions: {
     queries: {
       retry: 0,
       refetchOnWindowFocus: false,

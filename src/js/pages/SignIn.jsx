@@ -11,7 +11,8 @@ import logo from '../../assets/img/logo-blue.png';
 const useStyles = makeStyles((theme) => ({
   card: {
     maxWidth: '70%',
-    minHeight: '50vh',
+    height: '50vh',
+    maxHeight: '300px',
     backgroundColor: '#eea4b7',
     display: 'flex',
     alignItems: 'center',
