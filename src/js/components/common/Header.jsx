@@ -1,10 +1,6 @@
 import React from 'react';
 import {
-  AppBar,
-  Typography,
-  Toolbar,
-  IconButton,
-  Tooltip,
+  AppBar, Typography, Toolbar, IconButton, Tooltip, Box,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -41,6 +37,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#d4d0d5',
     borderRadius: '100%',
   },
+  userInfo: {
+    cursor: 'pointer',
+    borderRadius: '3rem',
+
+    '&:hover': {
+      backgroundColor: '#f0f2f5',
+    },
+  },
 }));
 
 const Header = ({ user }) => {
@@ -61,9 +65,17 @@ const Header = ({ user }) => {
 
         <div className={classes.flex} />
 
-        <img src={`data:image/jpeg;base64,${user.avatar}`} alt="my-social-network-logo" className={classes.avatar} />
+        <Box
+          display="flex"
+          alignItems="center"
+          className={classes.userInfo}
+          onClick={() => history.push('/me')}
+        >
+          <img src={`data:image/jpeg;base64,${user.avatar}`} alt="my-social-network-logo" className={classes.avatar} />
 
-        <Typography variant="body1" className={classes.userName}>Hi! {user.full_name}</Typography>
+          <Typography variant="body1" className={classes.userName}>Hi! {user.full_name}</Typography>
+        </Box>
+
         <Tooltip title="Sign Out">
           <IconButton onClick={() => signOut()} color="primary">
             <ExitToAppIcon />
