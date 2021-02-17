@@ -2,8 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import {
-  Box,
+  Box, Typography, Divider,
 } from '@material-ui/core';
+import clsx from 'clsx';
+
+import useMyPage from '../../queries/useMyPage';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -14,12 +17,14 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     flexDirection: 'column',
   },
+
   coverImgContainer: {
     height: '100%',
     width: '100%',
     maxWidth: '65rem',
 
     position: 'relative',
+    backgroundColor: 'pink',
   },
   coverImg: {
     objectFit: 'cover',
@@ -29,6 +34,19 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: '0.8rem',
     borderBottomRightRadius: '0.8rem',
   },
+  coverImgButton: {
+    position: 'absolute',
+    right: '3rem',
+    bottom: '1.5rem',
+    display: 'flex',
+
+    borderRadius: theme.spacing(1),
+    backgroundColor: '#e4e6eb',
+    padding: theme.spacing(1),
+
+    cursor: 'pointer',
+  },
+
   infoContainer: {
     backgroundColor: '#fff',
     paddingBottom: theme.spacing(2),
@@ -51,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
     objectFit: 'cover',
 
     borderRadius: '100%',
+    backgroundColor: 'pink',
   },
   cameraIcon: {
     position: 'absolute',
@@ -64,62 +83,81 @@ const useStyles = makeStyles((theme) => ({
 
     cursor: 'pointer',
   },
-  coverImgButton: {
-    position: 'absolute',
-    right: '3rem',
-    bottom: '1.5rem',
-    display: 'flex',
 
-    borderRadius: theme.spacing(1),
-    backgroundColor: '#e4e6eb',
-    padding: theme.spacing(1),
-
-    cursor: 'pointer',
-  },
   buttonText: {
     fontWeight: 'bold',
 
     display: 'flex',
     alignItems: 'center',
     paddingLeft: theme.spacing(0.5),
+    paddingRight: theme.spacing(0.5),
+  },
+  hoverButton: {
+    '&:hover': {
+      backgroundColor: '#cfd1d3',
+    },
+  },
+  fullName: {
+    fontWeight: 'revert',
+  },
+  slogan: {
+    color: '#65676b',
+    fontSize: '1.4rem',
+  },
+  divider: {
+    width: '80%',
+    maxWidth: '60rem',
+    marginTop: theme.spacing(2),
   },
 }));
 
 const CoverImage = () => {
   const classes = useStyles();
+  const { data } = useMyPage();
 
-  return (
-    <>
-      <div className={classes.background}>
-        <div className={classes.coverImgContainer}>
-          <img alt="background" className={classes.coverImg} src="https://cdnmedia.thethaovanhoa.vn/Upload/YSu1TgnVnIyxx9zisEumA/files/2021/01/2101/5.jpg" />
+  if (data) {
+    return (
+      <>
+        <div className={classes.background}>
+          <div className={classes.coverImgContainer}>
+            <img alt="background" className={classes.coverImg} src={data.cover_link} />
 
-          <Box className={classes.coverImgButton}>
-            <CameraAltIcon />
+            <Box className={clsx(classes.coverImgButton, classes.hoverButton)}>
+              <CameraAltIcon />
 
-            <div className={classes.buttonText}>
-              Chỉnh sửa ảnh bìa
+              <div className={classes.buttonText}>
+                Chỉnh sửa ảnh bìa
+              </div>
+            </Box>
+          </div>
+        </div>
+
+        <Box display="flex" alignItems="center" flexDirection="column" className={classes.infoContainer}>
+          <Box display="flex" height="0px" alignItems="flex-end" mt={4}>
+            <div className={classes.avatarImgContainer}>
+              <img alt="avatar" className={classes.avatarImg} src={data.avatar_link} />
+
+              <div className={clsx(classes.cameraIcon, classes.hoverButton)}>
+                <CameraAltIcon />
+              </div>
             </div>
           </Box>
-        </div>
-      </div>
 
-      <Box display="flex" alignItems="center" flexDirection="column" className={classes.infoContainer}>
-        <Box display="flex" height="0px" alignItems="flex-end" mt={4}>
-          <div className={classes.avatarImgContainer}>
-            <img alt="avatar" className={classes.avatarImg} src="https://cdnmedia.thethaovanhoa.vn/Upload/YSu1TgnVnIyxx9zisEumA/files/2021/01/2101/5.jpg" />
+          <Typography variant="h4" className={classes.fullName}>
+            {data.full_name}
+          </Typography>
 
-            <div className={classes.cameraIcon}>
-              <CameraAltIcon />
-            </div>
-          </div>
+          <Box className={classes.slogan} mt={1}>
+            {data.slogan}
+          </Box>
+
+          <Divider className={classes.divider} />
         </Box>
-        <div>
-          sssssssssssssssssssssssss
-        </div>
-      </Box>
-    </>
-  );
+      </>
+    );
+  }
+
+  return <></>;
 };
 
 export default CoverImage;

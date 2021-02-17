@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from 'react';
 import {
   AppBar, Typography, Toolbar, IconButton, Tooltip, Box,
@@ -26,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   logo: {
     width: '20%',
+    cursor: 'pointer',
   },
   avatar: {
     marginRight: theme.spacing(2),
@@ -61,7 +64,12 @@ const Header = ({ user }) => {
   return (
     <AppBar position="absolute">
       <Toolbar className={classes.header}>
-        <img src={logo} alt="my-social-network-logo" className={classes.logo} />
+        <img
+          src={logo}
+          alt="my-social-network-logo"
+          className={classes.logo}
+          onClick={() => history.push('/')}
+        />
 
         <div className={classes.flex} />
 
