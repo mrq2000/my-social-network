@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import {
   CssBaseline, LinearProgress,
@@ -8,6 +8,9 @@ import { useHistory } from 'react-router-dom';
 
 import Header from './Header';
 import useMe from '../../queries/useMe';
+
+import { initialState, AppReducer } from '../../AppReducer';
+import { AppStateContext, AppDispatchContext } from '../../AppContext';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -22,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
 const Layout = ({ children }) => {
   const history = useHistory();
   const { isError, data } = useMe();
+  const [state, dispatch] = useReducer(AppReducer, {
+    ...initialState, ...data,
+  });
 
   const classes = useStyles();
 
@@ -29,19 +35,32 @@ const Layout = ({ children }) => {
     history.push('/sign-in');
   }
 
+  useEffect(() => {
+    if (data) {
+      dispatch({
+        type: 'updateState',
+        payload: { ...initialState, ...data },
+      });
+    }
+  }, [data]);
+
   if (data) {
     return (
       <>
-        <CssBaseline />
-        <Header user={data} />
+        <AppStateContext.Provider value={state}>
+          <AppDispatchContext.Provider value={{ dispatch }}>
+            <CssBaseline />
+            <Header user={data} />
 
-        <main className={classes.content} id="main">
-          <div className={classes.appBarSpacer} />
+            <main className={classes.content} id="main">
+              <div className={classes.appBarSpacer} />
 
-          <div>
-            {children}
-          </div>
-        </main>
+              <div>
+                {children}
+              </div>
+            </main>
+          </AppDispatchContext.Provider>
+        </AppStateContext.Provider>
       </>
     );
   }

@@ -1,9 +1,10 @@
 import { createMuiTheme, colors } from '@material-ui/core';
+import shadows from './shadows';
 
 const theme = createMuiTheme({
   palette: {
     background: {
-      dark: '#f4f6f8',
+      dark: '#f0f2f5',
       default: '#3949ab',
       paper: colors.common.white,
     },
@@ -11,7 +12,10 @@ const theme = createMuiTheme({
       main: '#eea4b7',
     },
     secondary: {
-      main: '#5850EC',
+      main: '#fbcae37a',
+    },
+    text: {
+      secondary: '#65676b',
     },
   },
   overrides: {
@@ -30,6 +34,7 @@ const theme = createMuiTheme({
       },
     },
   },
+  shadows,
 });
 
 export default theme;

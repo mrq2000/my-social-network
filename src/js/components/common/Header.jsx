@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     width: '3rem',
     objectFit: 'cover',
 
-    backgroundColor: '#d4d0d5',
+    backgroundColor: theme.palette.secondary.main,
     borderRadius: '100%',
   },
   userInfo: {

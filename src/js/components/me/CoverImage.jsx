@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '65rem',
 
     position: 'relative',
-    backgroundColor: 'pink',
+    backgroundColor: theme.palette.secondary.main,
   },
   coverImg: {
     objectFit: 'cover',
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     objectFit: 'cover',
 
     borderRadius: '100%',
-    backgroundColor: 'pink',
+    backgroundColor: theme.palette.secondary.main,
   },
   cameraIcon: {
     position: 'absolute',
@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'revert',
   },
   slogan: {
-    color: '#65676b',
+    color: theme.palette.text.secondary,
     fontSize: '1.4rem',
   },
   divider: {
