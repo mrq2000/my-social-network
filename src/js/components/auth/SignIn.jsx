@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleLogin } from 'react-google-login';
-import { Typography } from '@material-ui/core';
+import { Typography, Box } from '@material-ui/core';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 
@@ -33,7 +33,9 @@ const SignIn = () => {
   };
 
   useEffect(() => {
-    if (error) setErrorMessage(error.message);
+    if (error) {
+      setErrorMessage(error.response && error.response.data ? error.response.data.message : error);
+    }
   }, [error]);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const SignIn = () => {
   }
 
   return (
-    <>
+    <Box display="flex" alignItems="center" flexDirection="column">
       <GoogleLogin
         clientId={process.env.GOOGLE_CLIENT_ID}
         buttonText="Sign In With Google"
@@ -67,7 +69,7 @@ const SignIn = () => {
         handleClose={handleClose}
         providerAccessToken={providerAccessToken}
       />
-    </>
+    </Box>
   );
 };
 

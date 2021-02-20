@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Box, Divider, Dialog, DialogContent, InputBase, DialogActions,
-  Button,
-  Typography,
+  Button, Typography,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import PublicIcon from '@material-ui/icons/Public';
 import LockIcon from '@material-ui/icons/Lock';
 import { useSnackbar } from 'notistack';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 import { useAppStateContext } from '../../AppContext';
 import BoxContainer from '../common/Box';
@@ -70,6 +69,7 @@ const AddDialog = ({ open, handleClose }) => {
 
   const { avatar, full_name: fullName } = useAppStateContext();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const renderIcon = (
     postType === postTypeEnum.PUBLIC ? <PublicIcon /> : <LockIcon />
@@ -90,6 +90,7 @@ const AddDialog = ({ open, handleClose }) => {
     return res.data;
   }, {
     onSuccess: () => {
+      queryClient.invalidateQueries('my-posts');
       enqueueSnackbar('Tạo bài viết thành công', { variant: 'success' });
       setContent('');
       handleClose('');

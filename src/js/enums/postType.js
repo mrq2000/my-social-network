@@ -16,4 +16,5 @@ class Gender extends Enum {
 module.exports = new Gender({
   PRIVATE: 1,
   PUBLIC: 2,
+  REMOVE: 3,
 });

@@ -31,7 +31,7 @@ const SignUpDialog = ({ open, handleClose, providerAccessToken }) => {
     setValue,
   } = useForm({
     resolver: yupResolver(userRegisterSchema),
-    mode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       birthday: null,
     },
