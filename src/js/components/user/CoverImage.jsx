@@ -1,13 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import {
   Box, Typography, Divider,
 } from '@material-ui/core';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
-
-import UpdateAvatar from './UpdateAvatar';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -18,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     flexDirection: 'column',
   },
-
   coverImgContainer: {
     height: '100%',
     width: '100%',
@@ -37,19 +32,6 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: '0.8rem',
     borderBottomRightRadius: '0.8rem',
   },
-  coverImgButton: {
-    position: 'absolute',
-    right: '3rem',
-    bottom: '1.5rem',
-    display: 'flex',
-
-    borderRadius: theme.spacing(1),
-    backgroundColor: '#e4e6eb',
-    padding: theme.spacing(1),
-
-    cursor: 'pointer',
-  },
-
   infoContainer: {
     backgroundColor: '#fff',
     paddingBottom: theme.spacing(2),
@@ -76,18 +58,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '100%',
     backgroundColor: theme.palette.secondary.main,
   },
-  cameraIcon: {
-    position: 'absolute',
-    right: '1.5rem',
-    bottom: '1.5rem',
-    display: 'flex',
-
-    borderRadius: '100%',
-    backgroundColor: '#e4e6eb',
-
-    cursor: 'pointer',
-  },
-
   buttonText: {
     fontWeight: 'bold',
 
@@ -123,14 +93,6 @@ const CoverImage = ({ data }) => {
       <div className={classes.background}>
         <div className={classes.coverImgContainer}>
           <img alt="cover_image" className={classes.coverImg} src={data.cover_name} />
-
-          <Box className={clsx(classes.coverImgButton, classes.hoverButton)}>
-            <CameraAltIcon />
-
-            <div className={classes.buttonText}>
-              Chỉnh sửa ảnh bìa
-            </div>
-          </Box>
         </div>
       </div>
 
@@ -138,10 +100,6 @@ const CoverImage = ({ data }) => {
         <Box display="flex" height="0px" alignItems="flex-end" mt={4}>
           <div className={classes.avatarImgContainer}>
             <img alt="avatar" className={classes.avatarImg} src={data.avatar_name} />
-
-            <div className={clsx(classes.cameraIcon, classes.hoverButton)}>
-              <UpdateAvatar />
-            </div>
           </div>
         </Box>
 

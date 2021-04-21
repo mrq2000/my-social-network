@@ -63,13 +63,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddDialog = ({ open, handleClose }) => {
-  const classes = useStyles();
-  const [content, setContent] = useState('');
-  const [postType, setPostType] = useState(postTypeEnum.PUBLIC);
-
   const { avatar, full_name: fullName } = useAppStateContext();
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+
+  const classes = useStyles();
+  const [content, setContent] = useState('');
+  const [postType, setPostType] = useState(postTypeEnum.PUBLIC);
 
   const renderIcon = (
     postType === postTypeEnum.PUBLIC ? <PublicIcon /> : <LockIcon />
@@ -89,8 +89,8 @@ const AddDialog = ({ open, handleClose }) => {
     });
     return res.data;
   }, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('my-posts');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('my-posts');
       enqueueSnackbar('Tạo bài viết thành công', { variant: 'success' });
       setContent('');
       handleClose('');

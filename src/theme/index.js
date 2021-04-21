@@ -19,6 +19,11 @@ const theme = createMuiTheme({
     },
   },
   overrides: {
+    MuiButton: {
+      label: {
+        textTransform: 'none',
+      },
+    },
     MuiTableCell: {
       head: {
         fontWeight: 900,

@@ -16,6 +16,17 @@ module.exports = class Enum {
     return Object.values(this.data);
   }
 
+  getValueExcept(values) {
+    const result = [];
+    this.getValues().forEach((val) => {
+      if (!values.includes(val)) {
+        result.push(val);
+      }
+    });
+
+    return result;
+  }
+
   /**
    * @returns key or undefined
    */

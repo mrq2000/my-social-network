@@ -33,6 +33,8 @@
     "react-dom": "^16.13.1",
     "react-google-login": "^5.2.2",
     "react-hook-form": "^6.8.6",
+    "react-image-crop": "^8.6.6",
+    "react-infinite-scroll-component": "^6.0.0",
     "react-query": "^3.9.2",
     "react-router-dom": "^5.2.0",
     "yup": "^0.29.3"

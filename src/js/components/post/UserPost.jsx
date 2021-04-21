@@ -8,7 +8,6 @@ import PublicIcon from '@material-ui/icons/Public';
 import LockIcon from '@material-ui/icons/Lock';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
-import { useAppStateContext } from '../../AppContext';
 import BoxContainer from '../common/Box';
 import postTypeEnum from '../../enums/postType';
 import { formatLocalDateTime } from '../../helpers/dayjs';
@@ -49,10 +48,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MyPost = ({ data }) => {
+const UserPost = ({ data, user }) => {
   const classes = useStyles();
-  const { avatar, full_name: fullName } = useAppStateContext();
-
   const renderIcon = (
     data.type === postTypeEnum.PUBLIC ? <PublicIcon fontSize="small" /> : <LockIcon fontSize="small" />
   );
@@ -60,11 +57,11 @@ const MyPost = ({ data }) => {
   return (
     <BoxContainer>
       <Box display="flex" alignItems="center">
-        <img src={`data:image/jpeg;base64,${avatar}`} alt="my-social-network-logo" className={classes.avatar} />
+        <img src={user.avatar_name} alt="avatar" className={classes.avatar} />
 
         <Box display="flex" flexDirection="column" mb={2} flex={1}>
           <Typography className={classes.fullName}>
-            {fullName}
+            {user.full_name}
           </Typography>
 
           <Box className={classes.postDetail} display="flex" alignItems="center" flex={1}>
@@ -103,8 +100,9 @@ const MyPost = ({ data }) => {
   );
 };
 
-MyPost.propTypes = {
+UserPost.propTypes = {
   data: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
-export default MyPost;
+export default UserPost;

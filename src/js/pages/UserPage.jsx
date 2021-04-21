@@ -3,17 +3,18 @@ import { Grid, Container, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useInfiniteQuery } from 'react-query';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useHistory, useParams } from 'react-router-dom';
 
-import useMyPage from '../queries/useMyPage';
+import useUserPage from '../queries/useUserPage';
 
 import Layout from '../components/common/Layout';
-import AddPost from '../components/post/AddPost';
-import MyPost from '../components/post/MyPost';
-import Friend from '../components/me/Friend';
+import UserPost from '../components/post/UserPost';
+import Friend from '../components/user/Friend';
+import UserInformation from '../components/user/Information';
+import CoverImage from '../components/user/CoverImage';
 
-import MyInformation from '../components/me/Information';
-import CoverImage from '../components/me/CoverImage';
 import { api } from '../helpers/axios';
+import useMe from '../queries/useMe';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -22,19 +23,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Me = () => {
+const UserPage = () => {
   const classes = useStyles();
-  const { data } = useMyPage();
+  const { userId } = useParams();
+  const { data } = useUserPage(userId);
   const [postData, setPostData] = useState([]);
+  const { data: me } = useMe();
+  const history = useHistory();
+
+  if (me && `${me.id}` === userId) {
+    history.push('/me');
+  }
 
   const {
     data: posts,
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(
-    ['my-posts'],
+    ['users posts', userId],
     async ({ pageParam = 0 }) => {
-      const res = await api.get('/my-posts', {
+      const res = await api.get(`/users/${userId}/posts`, {
         params: {
           limit: 8, offset: pageParam,
         },
@@ -57,7 +65,7 @@ const Me = () => {
       });
       setPostData(newPost);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postString]);
 
   return (
@@ -69,7 +77,7 @@ const Me = () => {
           <Grid item xs={5}>
             {data && (
               <>
-                <MyInformation myInfo={data} />
+                <UserInformation myInfo={data} />
 
                 <Box mt={3}>
                   <Friend data={data.friends} />
@@ -79,8 +87,6 @@ const Me = () => {
           </Grid>
 
           <Grid item xs={7}>
-            <AddPost />
-
             <InfiniteScroll
               dataLength={postData.length}
               hasMore={hasNextPage}
@@ -93,9 +99,9 @@ const Me = () => {
                 </p>
               )}
             >
-              { postData ? postData.map((post) => (
+              {postData && data ? postData.map((post) => (
                 <Box key={post.id} mt={2}>
-                  <MyPost data={post} />
+                  <UserPost data={post} user={data} />
                 </Box>
               )) : null}
             </InfiniteScroll>
@@ -106,4 +112,4 @@ const Me = () => {
   );
 };
 
-export default Me;
+export default UserPage;

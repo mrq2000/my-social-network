@@ -14,6 +14,9 @@ import PrivateRoute from './PrivateRoute';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import Me from './pages/Me';
+import UserPage from './pages/UserPage';
+
+import '../scss/app.scss';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +32,7 @@ const Router = (
     <Route path="/sign-in" component={SignIn} />
     <PrivateRoute exact path="/" component={Home} />
     <PrivateRoute exact path="/me" component={Me} />
+    <PrivateRoute exact path="/users/:userId" component={UserPage} />
   </Switch>
 );
 
