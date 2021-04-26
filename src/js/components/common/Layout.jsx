@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 
 import Header from './Header';
 import useMe from '../../queries/useMe';
+import BubbleChat from '../bubbleChat/BubbleChat';
 
 import { initialState, AppReducer } from '../../AppReducer';
 import { AppStateContext, AppDispatchContext } from '../../AppContext';
@@ -58,6 +59,8 @@ const Layout = ({ children }) => {
               <div>
                 {children}
               </div>
+
+              <BubbleChat />
             </main>
           </AppDispatchContext.Provider>
         </AppStateContext.Provider>

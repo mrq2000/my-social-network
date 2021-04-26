@@ -123,6 +123,7 @@ const SignUpDialog = ({ open, handleClose, providerAccessToken }) => {
           </Grid>
 
           <Grid item xs={4}>
+
             <FormControl variant="outlined" fullWidth error={!!errors.gender}>
               <InputLabel>Giới tính</InputLabel>
               <Controller

@@ -27,6 +27,7 @@
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
     "dayjs": "^1.10.4",
+    "lodash.debounce": "^4.0.8",
     "notistack": "^1.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
