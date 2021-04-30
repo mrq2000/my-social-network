@@ -1,10 +1,11 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   CssBaseline, LinearProgress,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 import Header from './Header';
 import useMe from '../../queries/useMe';
@@ -12,6 +13,8 @@ import BubbleChat from '../bubbleChat/BubbleChat';
 
 import { initialState, AppReducer } from '../../AppReducer';
 import { AppStateContext, AppDispatchContext } from '../../AppContext';
+
+import { getToken } from '../../helpers/storage';
 
 const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
@@ -26,6 +29,8 @@ const useStyles = makeStyles((theme) => ({
 const Layout = ({ children }) => {
   const history = useHistory();
   const { isError, data } = useMe();
+  const [currentSocket, setCurrentSocket] = useState(null);
+
   const [state, dispatch] = useReducer(AppReducer, {
     ...initialState, ...data,
   });
@@ -40,10 +45,24 @@ const Layout = ({ children }) => {
     if (data) {
       dispatch({
         type: 'updateState',
-        payload: { ...initialState, ...data },
+        payload: { ...initialState, ...data, currentSocket },
       });
     }
-  }, [data]);
+  }, [currentSocket, data]);
+
+  useEffect(() => {
+    const socket = io(process.env.BACKEND_BASE_URL);
+    setCurrentSocket(socket);
+    const token = getToken();
+
+    socket.emit('addUser', { token });
+
+    return () => {
+      socket.emit('disconnection');
+
+      socket.off();
+    };
+  }, []);
 
   if (data) {
     return (

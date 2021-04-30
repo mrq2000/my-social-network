@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewMessage = ({ handleClose }) => {
+const NewMessage = ({ handleClose, handleAddUserChatting }) => {
   const classes = useStyles();
 
   const [keyword, setKeyword] = useState('');
@@ -105,6 +105,11 @@ const NewMessage = ({ handleClose }) => {
           hasMore={hasNextPage}
           next={fetchNextPage}
           scrollableTarget="friend-list-suggest"
+          endMessage={(
+            <Box p={1} display="flex" justifyContent="center">
+              {keyword && (<>You seen all result</>)}
+            </Box>
+          )}
         >
           {!isFetching && friendList.map((friendInfo) => (
             <Box
@@ -114,7 +119,7 @@ const NewMessage = ({ handleClose }) => {
               p={1}
               alignItems="center"
               className={classes.friendContainer}
-              onClick={() => console.log(friendInfo.id)}
+              onClick={() => handleAddUserChatting(friendInfo)}
             >
               <Box mr={2} display="flex">
                 <img src={friendInfo.avatar_name} alt="avatar" className={classes.friendAvatar} />
@@ -139,6 +144,7 @@ const NewMessage = ({ handleClose }) => {
 
 NewMessage.propTypes = {
   handleClose: PropTypes.func.isRequired,
+  handleAddUserChatting: PropTypes.func.isRequired,
 };
 
 export default NewMessage;

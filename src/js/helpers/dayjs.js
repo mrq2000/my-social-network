@@ -18,3 +18,8 @@ export const getMonth = (dateTime) => new Date(dateTime).getMonth();
 export const getDate = (dateTime) => new Date(dateTime).getDate();
 export const getWeek = (dateTime) => dayjs(dateTime).isoWeek();
 export const getDay = (dateTime) => dayjs(dateTime).isoWeekday();
+
+export const getDifferencePerMinute = (date1, date2) => {
+  const dayjs1 = dayjs(date1);
+  return dayjs1.diff(date2, 'minute', true);
+};
