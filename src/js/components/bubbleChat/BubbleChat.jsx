@@ -5,26 +5,33 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import NewMessage from './NewMessage';
 import ChattingBox from './ChattingBox';
+import SmallBubble from './SmallBubble';
+
+import useUserList from '../../queries/useUserList';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     position: 'fixed',
     bottom: 0,
-    right: 0,
+    right: 30,
   },
   newMessageButton: {
     boxShadow: theme.shadows[1],
     backgroundColor: '#fff',
-    marginRight: 30,
+
     marginBottom: 30,
   },
 }));
 
 const Message = () => {
   const classes = useStyles();
-  const [openNewMessage, setOpenNewMessage] = useState(true);
+  const [openNewMessage, setOpenNewMessage] = useState(false);
   const [userChattingIds, setUserChatting] = useState(window.localStorage.getItem('userChatIds') ? JSON.parse(window.localStorage.getItem('userChatIds')) : []);
+  const [userSmallChatIds, setUserSmallChat] = useState(window.localStorage.getItem('userSmallChatIds') ? JSON.parse(window.localStorage.getItem('userSmallChatIds')) : []);
 
+  const { data: userSmallChat } = useUserList(userSmallChatIds);
+
+  // new message
   const handleOpenNewMessage = () => {
     setOpenNewMessage(!openNewMessage);
   };
@@ -33,6 +40,7 @@ const Message = () => {
     setOpenNewMessage(false);
   };
 
+  // current chatting
   const handleCloseChatBox = (id) => {
     const newUserIds = userChattingIds.filter((userId) => userId !== id);
     setUserChatting(newUserIds);
@@ -45,6 +53,21 @@ const Message = () => {
     setUserChatting(cloneUser);
   };
 
+  // small chat
+  const handleClosedSmallChat = (id) => {
+    const newUserIds = userSmallChatIds.filter((userId) => userId !== id);
+    setUserSmallChat(newUserIds);
+    localStorage.setItem('userSmallChatIds', JSON.stringify(newUserIds));
+  };
+
+  const handleAddUserSmallChat = (id) => {
+    handleCloseChatBox(id);
+
+    const cloneUser = [...new Set([...userSmallChatIds, id])];
+    localStorage.setItem('userSmallChatIds', JSON.stringify(cloneUser));
+    setUserSmallChat(cloneUser);
+  };
+
   return (
     <div className={classes.container}>
       <Box display="flex" alignItems="flex-end">
@@ -53,6 +76,7 @@ const Message = () => {
             <ChattingBox
               userId={id}
               handleClose={() => handleCloseChatBox(id)}
+              handleAddUserSmallChat={() => handleAddUserSmallChat(id)}
             />
           </Box>
         ))}
@@ -67,6 +91,16 @@ const Message = () => {
         )}
 
         <Box display="flex" flexDirection="column">
+          {userSmallChat && userSmallChat.map((user) => (
+            <Box mb={1} key={user.id}>
+              <SmallBubble
+                userInfo={user}
+                handleAddUserChatting={handleAddUserChatting}
+                handleClose={() => handleClosedSmallChat(user.id)}
+              />
+            </Box>
+          ))}
+
           <Tooltip title="Tin nhắn mới" placement="left">
             <IconButton className={classes.newMessageButton} onClick={handleOpenNewMessage}>
               <EditIcon />

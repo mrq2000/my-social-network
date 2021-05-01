@@ -12,7 +12,10 @@ import SendIcon from '@material-ui/icons/Send';
 
 import useUserInfo from '../../queries/useUserInfo';
 import useUserMessage from '../../queries/useUserMessage';
-import { getDifferencePerMinute } from '../../helpers/dayjs';
+import { getDifferencePerMinute, getFuckingAwesomeDate } from '../../helpers/dayjs';
+
+const LONG_MINUTE = 5;
+const SMALL_AVATAR_WIDTH = '2rem';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -56,9 +59,42 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     width: '100%',
   },
+  smallFriendAvatar: {
+    height: SMALL_AVATAR_WIDTH,
+    width: SMALL_AVATAR_WIDTH,
+    objectFit: 'cover',
+
+    backgroundColor: theme.palette.secondary.main,
+    borderRadius: '100%',
+  },
+  chatContent: {
+    lineHeight: SMALL_AVATAR_WIDTH,
+    lineBreak: 'anywhere',
+    whiteSpace: 'pre-wrap',
+
+    paddingLeft: '7px',
+    paddingRight: '7px',
+    borderRadius: '5px',
+  },
+  userChatColor: {
+    backgroundColor: '#e4e6eb',
+  },
+  myChatColor: {
+    backgroundColor: theme.palette.secondary.main,
+  },
+  smallAvatarWidth: {
+    width: SMALL_AVATAR_WIDTH,
+  },
+  textTime: {
+    color: '#8a8d91',
+    fontSize: '0.675rem',
+  },
+  chatContentContainer: {
+    overflow: 'auto',
+  },
 }));
 
-const ChattingBox = ({ handleClose, handleAddUserChatting, userId }) => {
+const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
   const classes = useStyles();
   const [messageList, setMessageList] = useState([]);
 
@@ -74,41 +110,46 @@ const ChattingBox = ({ handleClose, handleAddUserChatting, userId }) => {
   const messagesString = JSON.stringify(messages);
 
   const renderUserChat = (withImg, content) => (
-    <Box display="flex" width="100%" mt={2}>
-      <Box width="20%">
-        {withImg && 222}
+    <Box display="flex" width="100%" mb={1}>
+      <Box mr={1}>
+        {withImg && userInfo
+          ? <img src={userInfo.avatar_name} alt="avatar" className={classes.smallFriendAvatar} />
+          : <Box className={classes.smallAvatarWidth} />}
       </Box>
-      <Box>
+
+      <Box className={[classes.chatContent, classes.userChatColor]} display="flex" alignItems="center" maxWidth="80%">
         {content}
       </Box>
     </Box>
   );
 
   const renderMyChat = (content) => (
-    <Box display="flex" width="100%" mt={2} alignItems="flex-end">
-      <Box>
+    <Box display="flex" width="100%" mb={1} justifyContent="flex-end">
+      <Box className={[classes.chatContent, classes.myChatColor]} display="flex" alignItems="center" maxWidth="80%">
         {content}
       </Box>
     </Box>
   );
 
   const renderTime = (time) => (
-    <Box mt={2}>
-      {time}
+    <Box mb={1} display="flex" justifyContent="center" className={classes.textTime}>
+      {getFuckingAwesomeDate(time)}
     </Box>
   );
 
   const renderChatRow = (currentMessage, prevMessage) => {
     const result = [];
 
-    if (getDifferencePerMinute(currentMessage.created_at, prevMessage.created_at) > 5) {
-      result.push(renderTime('hello world'));
+    if (prevMessage
+      && getDifferencePerMinute(currentMessage.created_at, prevMessage.created_at) > LONG_MINUTE) {
+      result.push(renderTime(currentMessage.created_at));
     }
 
     if (currentMessage.sender_id === userId) {
       const withImg = !prevMessage
-        || (prevMessage.sender_id !== currentMessage.id)
-        || getDifferencePerMinute(currentMessage.created_at, prevMessage.created_at) > 5;
+        || (prevMessage.sender_id !== currentMessage.sender_id)
+        || getDifferencePerMinute(currentMessage.created_at, prevMessage.created_at) > LONG_MINUTE;
+
       result.push(renderUserChat(withImg, currentMessage.content));
     } else {
       result.push(renderMyChat(currentMessage.content));
@@ -144,7 +185,7 @@ const ChattingBox = ({ handleClose, handleAddUserChatting, userId }) => {
         </Box>
 
         <Box>
-          <IconButton className={classes.colorPink} onClick={handleClose}>
+          <IconButton className={classes.colorPink} onClick={handleAddUserSmallChat}>
             <RemoveIcon fontSize="small" />
           </IconButton>
 
@@ -156,7 +197,7 @@ const ChattingBox = ({ handleClose, handleAddUserChatting, userId }) => {
 
       <Divider />
 
-      <Box id={`boxChat-with-${userId}`} pl={1} pr={1} mt={2} mb={2} display="flex" flex={1} width="100%" flexDirection="column">
+      <Box id={`boxChat-with-${userId}`} pl={1} pr={1} mb={2} display="flex" flex={1} width="100%" flexDirection="column" className={classes.chatContentContainer}>
         {isFetching && (
           <Box display="flex" justifyContent="center" mt={1}>
             <CircularProgress />
@@ -166,14 +207,10 @@ const ChattingBox = ({ handleClose, handleAddUserChatting, userId }) => {
         {!isFetching && messageList.map((message, index) => (
           <Box
             key={message.id}
-            p={1}
-            display="flex"
             width="100%"
-            alignItems="center"
-            className={classes.friendContainer}
-            onClick={() => handleAddUserChatting(message.id)}
+            pr={2}
           >
-            {renderChatRow(message, index > 0 && messageList[index])}
+            {renderChatRow(message, index > 0 && messageList[index - 1])}
           </Box>
         ))}
 
@@ -206,7 +243,7 @@ const ChattingBox = ({ handleClose, handleAddUserChatting, userId }) => {
 
 ChattingBox.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  handleAddUserChatting: PropTypes.func.isRequired,
+  handleAddUserSmallChat: PropTypes.func.isRequired,
   userId: PropTypes.string.isRequired,
 };
 

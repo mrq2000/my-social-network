@@ -14,11 +14,10 @@ const useProvince = (keyword, limit) => useInfiniteQuery(['suggest', 'my-friends
   return res.data;
 },
 {
-  getNextPageParam: (lastPage, allPage) => (
-    lastPage.length >= limit ? allPage.length * limit : false),
-}, {
   staleTime: Infinity,
   cacheTime: 7200000,
+  getNextPageParam: (lastPage, allPage) => (
+    lastPage.length >= limit ? allPage.length * limit : false),
 });
 
 export default useProvince;

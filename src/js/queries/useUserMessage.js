@@ -14,7 +14,6 @@ const useUserMessages = (userId, limit) => useInfiniteQuery(['messages', userId,
   return res.data;
 }, {
   getNextPageParam: (lastPage) => lastPage.nextCursor,
-}, {
   staleTime: 300000,
 });
 
