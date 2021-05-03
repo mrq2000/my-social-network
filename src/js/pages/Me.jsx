@@ -6,7 +6,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import useMyPage from '../queries/useMyPage';
 
-import Layout from '../components/common/Layout';
 import AddPost from '../components/post/AddPost';
 import MyPost from '../components/post/MyPost';
 import Friend from '../components/me/Friend';
@@ -61,7 +60,7 @@ const Me = () => {
   }, [postString]);
 
   return (
-    <Layout>
+    <>
       {data && <CoverImage data={data} />}
 
       <Container className={classes.container}>
@@ -102,7 +101,7 @@ const Me = () => {
           </Grid>
         </Grid>
       </Container>
-    </Layout>
+    </>
   );
 };
 

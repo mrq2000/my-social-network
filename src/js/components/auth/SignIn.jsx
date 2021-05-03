@@ -1,20 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleLogin } from 'react-google-login';
-import { Typography, Box } from '@material-ui/core';
+import { Typography, Box, Button } from '@material-ui/core';
 import { useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
 
 import SignUpDialog from './SignUpDialog';
+import DemoDialog from './DemoDialog';
 import { api, setToken } from '../../helpers/axios';
 
 const SignIn = () => {
   const history = useHistory();
+
   const [errorMessage, setErrorMessage] = useState('');
-  const [openSignUp, setOpenSignUp] = useState('');
+  const [openSignUp, setOpenSignUp] = useState(false);
+  const [openDemo, setOpenDemo] = useState(false);
   const [providerAccessToken, setProviderAccessToken] = useState('');
 
-  const handleClose = useCallback(() => {
+  const handleCloseSignUp = useCallback(() => {
     setOpenSignUp(false);
+  }, []);
+
+  const handleCloseDemo = useCallback(() => {
+    setOpenDemo(false);
+  }, []);
+
+  const handleOpenDemo = useCallback(() => {
+    setOpenDemo(true);
   }, []);
 
   const {
@@ -66,8 +77,19 @@ const SignIn = () => {
 
       <SignUpDialog
         open={openSignUp}
-        handleClose={handleClose}
+        handleClose={handleCloseSignUp}
         providerAccessToken={providerAccessToken}
+      />
+
+      <Box mt={2}>
+        <Button onClick={handleOpenDemo}>
+          Sử Dụng Tài Khoản Demo
+        </Button>
+      </Box>
+
+      <DemoDialog
+        open={openDemo}
+        handleClose={handleCloseDemo}
       />
     </Box>
   );

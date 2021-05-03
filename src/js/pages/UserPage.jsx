@@ -7,7 +7,6 @@ import { useHistory, useParams } from 'react-router-dom';
 
 import useUserPage from '../queries/useUserPage';
 
-import Layout from '../components/common/Layout';
 import UserPost from '../components/post/UserPost';
 import Friend from '../components/user/Friend';
 import UserInformation from '../components/user/Information';
@@ -69,7 +68,7 @@ const UserPage = () => {
   }, [postString]);
 
   return (
-    <Layout>
+    <>
       {data && <CoverImage data={data} />}
 
       <Container className={classes.container}>
@@ -108,7 +107,7 @@ const UserPage = () => {
           </Grid>
         </Grid>
       </Container>
-    </Layout>
+    </>
   );
 };
 

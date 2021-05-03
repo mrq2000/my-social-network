@@ -107,7 +107,7 @@ const NewMessage = ({ handleClose, handleAddUserChatting }) => {
           scrollableTarget="friend-list-suggest"
           endMessage={(
             <Box p={1} display="flex" justifyContent="center">
-              {keyword && (<>You seen all result</>)}
+              {keyword && !isFetching && (<>You seen all result</>)}
             </Box>
           )}
         >

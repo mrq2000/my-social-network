@@ -16,6 +16,8 @@ import SignIn from './pages/SignIn';
 import Me from './pages/Me';
 import UserPage from './pages/UserPage';
 
+import Layout from './components/common/Layout';
+
 import '../scss/app.scss';
 
 const queryClient = new QueryClient({
@@ -30,9 +32,9 @@ const queryClient = new QueryClient({
 const Router = (
   <Switch>
     <Route path="/sign-in" component={SignIn} />
-    <PrivateRoute exact path="/" component={Home} />
-    <PrivateRoute exact path="/me" component={Me} />
-    <PrivateRoute exact path="/users/:userId" component={UserPage} />
+    <PrivateRoute exact path="/" component={Home} layout={Layout} />
+    <PrivateRoute exact path="/me" component={Me} layout={Layout} />
+    <PrivateRoute exact path="/users/:userId" component={UserPage} layout={Layout} />
   </Switch>
 );
 

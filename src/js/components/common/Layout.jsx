@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 const Layout = ({ children }) => {
   const history = useHistory();
   const { isError, data } = useMe();
+
   const [currentSocket, setCurrentSocket] = useState(null);
 
   const [state, dispatch] = useReducer(AppReducer, {

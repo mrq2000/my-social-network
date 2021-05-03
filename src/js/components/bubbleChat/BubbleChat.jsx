@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Message = () => {
+const BubbleChat = () => {
   const classes = useStyles();
   const [openNewMessage, setOpenNewMessage] = useState(false);
   const [userChattingIds, setUserChatting] = useState(window.localStorage.getItem('userChatIds') ? JSON.parse(window.localStorage.getItem('userChatIds')) : []);
@@ -112,4 +112,4 @@ const Message = () => {
   );
 };
 
-export default Message;
+export default BubbleChat;

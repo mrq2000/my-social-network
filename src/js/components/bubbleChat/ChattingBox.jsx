@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Box, IconButton, Divider, TextField,
+  Box, IconButton, Divider, TextField, RootRef,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -92,11 +93,16 @@ const useStyles = makeStyles((theme) => ({
   chatContentContainer: {
     overflow: 'auto',
   },
+  endMessage: {
+    color: '#8a8d91',
+    fontSize: '0.75rem',
+  },
 }));
 
 const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
   const classes = useStyles();
   const [messageList, setMessageList] = useState([]);
+  const boxChatRef = useRef();
 
   const {
     data: messages,
@@ -158,6 +164,16 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
     return result;
   };
 
+  const EndMessage = (
+    <Box display="flex" justifyContent="center" alignItems="center" mt={1} mb={1} flexDirection="column" className={classes.endMessage}>
+      <div>
+        Welcome to MY SOCIAL NETWORK
+      </div>
+      Author: Quoc Pham
+    </Box>
+  );
+
+  // get new messages when scroll
   useEffect(() => {
     if (messages) {
       const newMessageList = [];
@@ -169,6 +185,13 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messagesString]);
+
+  // scroll to bottom chat
+  useEffect(() => {
+    if (boxChatRef.current) {
+      boxChatRef.current.scrollTop = boxChatRef.current.scrollHeight;
+    }
+  }, [boxChatRef.current ? boxChatRef.current.scrollHeight : 0]);
 
   return (
     <Box className={classes.container} display="flex" flexDirection="column">
@@ -197,30 +220,33 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
 
       <Divider />
 
-      <Box id={`boxChat-with-${userId}`} pl={1} pr={1} mb={2} display="flex" flex={1} width="100%" flexDirection="column" className={classes.chatContentContainer}>
-        {isFetching && (
-          <Box display="flex" justifyContent="center" mt={1}>
-            <CircularProgress />
-          </Box>
-        )}
+      <RootRef rootRef={boxChatRef}>
+        <Box id={`boxChat-with-${userId}`} pl={1} pr={1} display="flex" flex={1} width="100%" flexDirection="column" className={classes.chatContentContainer}>
+          <InfiniteScroll
+            dataLength={messageList.length}
+            hasMore={hasNextPage}
+            next={fetchNextPage}
+            scrollableTarget={`boxChat-with-${userId}`}
+            endMessage={EndMessage}
+          />
 
-        {!isFetching && messageList.map((message, index) => (
-          <Box
-            key={message.id}
-            width="100%"
-            pr={2}
-          >
-            {renderChatRow(message, index > 0 && messageList[index - 1])}
-          </Box>
-        ))}
+          {isFetching && (
+            <Box display="flex" justifyContent="center" mt={1}>
+              <CircularProgress />
+            </Box>
+          )}
 
-        <InfiniteScroll
-          dataLength={messageList.length}
-          hasMore={hasNextPage}
-          next={fetchNextPage}
-          scrollableTarget={`boxChat-with-${userId}`}
-        />
-      </Box>
+          {!isFetching && messageList.map((message, index) => (
+            <Box
+              key={message.id}
+              width="100%"
+              pr={2}
+            >
+              {renderChatRow(message, index > 0 && messageList[index - 1])}
+            </Box>
+          ))}
+        </Box>
+      </RootRef>
 
       <Box pl={2} pr={2} mt={1} mb={2} display="flex" justifyContent="space-between">
         <Box mr={2} display="flex" flex={1}>

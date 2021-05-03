@@ -4,14 +4,21 @@ import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 import { getToken } from './helpers/storage';
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
+import BlankLayout from './components/common/BlankLayout';
+
+const PrivateRoute = ({ component: Component, layout: Layout, ...rest }) => {
   const hasToken = getToken();
+
   return (
     <Route
       {...rest}
       render={
         (props) => (hasToken
-          ? (<Component {...props} />)
+          ? (
+            <Layout>
+              <Component {...props} />
+            </Layout>
+          )
           : (
             <Redirect
               to={{
@@ -25,8 +32,13 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   );
 };
 
+PrivateRoute.defaultProps = {
+  layout: BlankLayout,
+};
+
 PrivateRoute.propTypes = {
   component: PropTypes.func.isRequired,
+  layout: PropTypes.func,
 };
 
 export default PrivateRoute;
