@@ -10,6 +10,9 @@ import AddPost from '../components/post/AddPost';
 import MyPost from '../components/post/MyPost';
 import Friend from '../components/me/Friend';
 
+import CoverImageLoading from '../components/common/CoverImageLoading';
+import PostLoading from '../components/common/PostLoading';
+
 import MyInformation from '../components/me/Information';
 import CoverImage from '../components/me/CoverImage';
 import { api } from '../helpers/axios';
@@ -23,13 +26,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Me = () => {
   const classes = useStyles();
-  const { data } = useMyPage();
+  const { data, isLoading } = useMyPage();
   const [postData, setPostData] = useState([]);
 
   const {
     data: posts,
     fetchNextPage,
     hasNextPage,
+    isFetching,
   } = useInfiniteQuery(
     ['my-posts'],
     async ({ pageParam = 0 }) => {
@@ -62,6 +66,7 @@ const Me = () => {
   return (
     <>
       {data && <CoverImage data={data} />}
+      {isLoading && <CoverImageLoading />}
 
       <Container className={classes.container}>
         <Grid container spacing={2}>
@@ -85,8 +90,7 @@ const Me = () => {
               hasMore={hasNextPage}
               next={fetchNextPage}
               scrollableTarget="main"
-              loader={<h4>Loading...</h4>}
-              endMessage={(
+              endMessage={!isFetching && (
                 <p>
                   <b>You have seen it all</b>
                 </p>
@@ -98,6 +102,18 @@ const Me = () => {
                 </Box>
               )) : null}
             </InfiniteScroll>
+
+            {isFetching && (
+              <>
+                <Box mt={2}>
+                  <PostLoading />
+                </Box>
+
+                <Box mt={2}>
+                  <PostLoading />
+                </Box>
+              </>
+            )}
           </Grid>
         </Grid>
       </Container>

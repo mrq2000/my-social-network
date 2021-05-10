@@ -4,7 +4,7 @@ import { setToken as setTokenStorage, getToken as getTokenStorage } from './stor
 
 export const api = axios.create({
   baseURL: process.env.BACKEND_BASE_URL,
-  timeout: 6000,
+  timeout: 30000,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
   },
