@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Tooltip } from '@material-ui/core';
@@ -9,6 +11,7 @@ import { useMutation } from 'react-query';
 
 import { api } from '../../helpers/axios';
 import likePostType from '../../enums/likePostType';
+// import hahaSvg from '../../../assets/img/haha.svg';
 
 const useStyles = makeStyles((theme) => ({
   actionContainer: {
@@ -52,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       transform: 'scale(1.5)',
     },
-
   },
   actionsBox: {
     borderTop: '1px solid #ced0d4',
@@ -68,19 +70,33 @@ const useStyles = makeStyles((theme) => ({
     color: '#65676b',
     fontSize: '1rem',
   },
+  marginRight: {
+    marginRight: '5px',
+  },
 }));
 
-const ActionsPost = ({ postId, likes }) => {
+const ActionsPost = ({ postId, likes, likeByMe }) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
   const [defaultDisplayUser, setDefaultDisplayUser] = useState([]);
+  const [myLike, setMyLike] = useState(likeByMe);
 
   const formatLikes = useMemo(() => {
     const result = {};
-    const clonedDefaultDisplayUser = [...defaultDisplayUser];
+    const clonedDefaultDisplayUser = [];
+    const cloneLikes = [...likes];
 
-    likes.forEach((like) => {
+    if (myLike) {
+      cloneLikes.push({
+        user: {
+          full_name: 'Bạn',
+        },
+        type: myLike.type,
+      });
+    }
+
+    cloneLikes.forEach((like) => {
       if (clonedDefaultDisplayUser.length < 2) {
         clonedDefaultDisplayUser.push(like.user);
       }
@@ -93,10 +109,9 @@ const ActionsPost = ({ postId, likes }) => {
     });
 
     setDefaultDisplayUser(clonedDefaultDisplayUser);
-
     return result;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [likes]);
+  }, [likes, myLike]);
 
   const renderUserLike = useMemo(() => {
     let total = 0;
@@ -130,24 +145,38 @@ const ActionsPost = ({ postId, likes }) => {
     setOpen(false);
   };
 
-  const { mutate: likePost } = useMutation(async () => {
-    await api.post(`/posts/${postId}/like`);
+  const { mutate: likePost } = useMutation(async (type) => {
+    await api.post(`/posts/${postId}/like`, {
+      type,
+    });
+    setMyLike({
+      user: {
+        full_name: 'Bạn',
+      },
+      type,
+    });
   });
 
   return (
     <>
       <Box display="flex" flexDirection="row" mb={2}>
         {
-          sortKey.map((key) => Number(key)).map((val) => (
-            <Tooltip key={val} title={formatUserLike(val)} placement="top">
-              <img
-                src={likePostType.getLikePostLink(val)}
-                alt={likePostType.getLikePostTitle(val)}
-                className={classes.smallIcon}
-              />
-            </Tooltip>
-          ))
+          sortKey.map((key) => {
+            const val = Number(key);
+            const keyContainer = `${val}-${postId}`;
+
+            return (
+              <Tooltip key={keyContainer} title={formatUserLike(val)} placement="top">
+                <img
+                  src={likePostType.getLikePostLink(val)}
+                  alt={likePostType.getLikePostTitle(val)}
+                  className={classes.smallIcon}
+                />
+              </Tooltip>
+            );
+          })
         }
+
         <Box ml={1} className={classes.likeDetailText}>
           {renderUserLike}
         </Box>
@@ -157,7 +186,6 @@ const ActionsPost = ({ postId, likes }) => {
         <Box
           width="30%"
           className={classes.actionContainer}
-          onClick={likePost}
           onMouseEnter={handleOpen}
           onMouseLeave={handleClose}
         >
@@ -171,6 +199,7 @@ const ActionsPost = ({ postId, likes }) => {
                         src={likePostType.getLikePostLink(val)}
                         alt={likePostType.getLikePostTitle(val)}
                         className={classes.reactionIcon}
+                        onClick={() => likePost(val)}
                       />
                     </Tooltip>
                   ))
@@ -183,10 +212,10 @@ const ActionsPost = ({ postId, likes }) => {
             display="flex"
             justifyContent="center"
             alignItems="center"
+            style={{ color: likePostType.getPostLikeColor(myLike && myLike.type) }}
           >
-            <ThumbUpIcon className={classes.icon} fontSize="small" />
-
-            Thích
+            {myLike ? <img src={likePostType.getPostSmallIcon(myLike.type)} alt="icon" className={[classes.smallIcon, classes.marginRight].join(' ')} /> : <ThumbUpIcon className={classes.icon} fontSize="small" />}
+            {myLike ? likePostType.getLikePostTitle(myLike.type) : 'Thích'}
           </Box>
         </Box>
 
@@ -221,6 +250,7 @@ const ActionsPost = ({ postId, likes }) => {
 ActionsPost.propTypes = {
   postId: PropTypes.string.isRequired,
   likes: PropTypes.array.isRequired,
+  likeByMe: PropTypes.object.isRequired,
 };
 
 export default ActionsPost;

@@ -36,9 +36,13 @@ const PostLoading = () => {
   const [height, setHeight] = useState(randomHeight());
 
   useEffect(() => {
-    setInterval(() => {
+    const random = setInterval(() => {
       setHeight(randomHeight());
     }, 1000);
+
+    return () => {
+      clearInterval(random);
+    };
   }, []);
 
   return (

@@ -119,7 +119,7 @@ const NewMessage = ({ handleClose, handleAddUserChatting }) => {
               p={1}
               alignItems="center"
               className={classes.friendContainer}
-              onClick={() => handleAddUserChatting(friendInfo)}
+              onClick={() => handleAddUserChatting(friendInfo.id)}
             >
               <Box mr={2} display="flex">
                 <img src={friendInfo.avatar_name} alt="avatar" className={classes.friendAvatar} />

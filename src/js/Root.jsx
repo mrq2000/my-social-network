@@ -15,6 +15,7 @@ import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import Me from './pages/Me';
 import UserPage from './pages/UserPage';
+import SearchUserPage from './pages/SearchUserPage';
 
 import Layout from './components/common/Layout';
 
@@ -35,6 +36,7 @@ const Router = (
     <PrivateRoute exact path="/" component={Home} layout={Layout} />
     <PrivateRoute exact path="/me" component={Me} layout={Layout} />
     <PrivateRoute exact path="/users/:userId" component={UserPage} layout={Layout} />
+    <PrivateRoute path="/search" component={SearchUserPage} layout={Layout} />
   </Switch>
 );
 

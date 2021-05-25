@@ -97,7 +97,7 @@ const MyPost = ({ data }) => {
       </Box>
 
       <Box mt={1}>
-        <ActionsPost likes={data.likes} />
+        <ActionsPost likes={data.likes} postId={data.id} likeByMe={data.me} />
       </Box>
     </BoxContainer>
   );

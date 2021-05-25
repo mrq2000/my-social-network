@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect, useState,
+} from 'react';
 import {
-  Box, IconButton, Divider, TextField, RootRef,
+  Box, IconButton, Divider, TextField,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -11,9 +13,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import RemoveIcon from '@material-ui/icons/Remove';
 import SendIcon from '@material-ui/icons/Send';
 
+import { getToken } from '../../helpers/storage';
 import useUserInfo from '../../queries/useUserInfo';
 import useUserMessage from '../../queries/useUserMessage';
 import { getDifferencePerMinute, getFuckingAwesomeDate } from '../../helpers/dayjs';
+
+import { useAppStateContext } from '../../AppContext';
 
 const LONG_MINUTE = 5;
 const SMALL_AVATAR_WIDTH = '2rem';
@@ -101,14 +106,16 @@ const useStyles = makeStyles((theme) => ({
 
 const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
   const classes = useStyles();
+  const { currentSocket } = useAppStateContext();
+
+  const [newMessage, setNewMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
-  const boxChatRef = useRef();
+  const [isSendingMessageId, setSendingMessageId] = useState([]);
 
   const {
     data: messages,
     fetchNextPage,
     hasNextPage,
-    isFetching,
   } = useUserMessage(userId, 10);
 
   const { data: userInfo } = useUserInfo(userId);
@@ -173,6 +180,31 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
     </Box>
   );
 
+  const handleChangeMessage = (e) => {
+    setNewMessage(e.target.value);
+  };
+
+  const handleChat = (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault();
+      if (newMessage.length > 0) {
+        const token = getToken();
+        currentSocket.emit('new message', {
+          userId, message: newMessage, token,
+        }, (data) => console.log(data));
+
+        const timeNow = Date.now();
+        messageList.push({
+          id: timeNow,
+          content: newMessage,
+          created_at: timeNow,
+        });
+
+        setNewMessage('');
+      }
+    }
+  };
+
   // get new messages when scroll
   useEffect(() => {
     if (messages) {
@@ -180,18 +212,10 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
       messages.pages.forEach((post) => {
         newMessageList.push(...post.messages);
       });
-      newMessageList.reverse();
       setMessageList(newMessageList);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messagesString]);
-
-  // scroll to bottom chat
-  useEffect(() => {
-    if (boxChatRef.current) {
-      boxChatRef.current.scrollTop = boxChatRef.current.scrollHeight;
-    }
-  }, [boxChatRef.current ? boxChatRef.current.scrollHeight : 0]);
 
   return (
     <Box className={classes.container} display="flex" flexDirection="column">
@@ -208,11 +232,11 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
         </Box>
 
         <Box>
-          <IconButton className={classes.colorPink} onClick={handleAddUserSmallChat}>
+          <IconButton className={classes.colorPink} onClick={() => handleAddUserSmallChat(userId)}>
             <RemoveIcon fontSize="small" />
           </IconButton>
 
-          <IconButton className={classes.colorPink} onClick={handleClose}>
+          <IconButton className={classes.colorPink} onClick={() => handleClose(userId)}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Box>
@@ -220,23 +244,34 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
 
       <Divider />
 
-      <RootRef rootRef={boxChatRef}>
-        <Box id={`boxChat-with-${userId}`} pl={1} pr={1} display="flex" flex={1} width="100%" flexDirection="column" className={classes.chatContentContainer}>
-          <InfiniteScroll
-            dataLength={messageList.length}
-            hasMore={hasNextPage}
-            next={fetchNextPage}
-            scrollableTarget={`boxChat-with-${userId}`}
-            endMessage={EndMessage}
-          />
-
-          {isFetching && (
-            <Box display="flex" justifyContent="center" mt={1}>
-              <CircularProgress />
-            </Box>
-          )}
-
-          {!isFetching && messageList.map((message, index) => (
+      <Box
+        pr={1}
+        pl={1}
+        flex={1}
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        id={`boxChat-with-${userId}`}
+        className={classes.chatContentContainer}
+        style={{ display: 'flex', flexDirection: 'column-reverse' }}
+      >
+        <InfiniteScroll
+          dataLength={messageList.length}
+          hasMore={hasNextPage}
+          scrollableTarget={`boxChat-with-${userId}`}
+          next={fetchNextPage}
+          endMessage={EndMessage}
+          style={{ display: 'flex', flexDirection: 'column-reverse' }}
+          inverse
+          loader={
+            (
+              <Box display="flex" justifyContent="center" mt={1}>
+                <CircularProgress />
+              </Box>
+            )
+          }
+        >
+          {messageList.map((message, index) => (
             <Box
               key={message.id}
               width="100%"
@@ -245,17 +280,20 @@ const ChattingBox = ({ handleClose, userId, handleAddUserSmallChat }) => {
               {renderChatRow(message, index > 0 && messageList[index - 1])}
             </Box>
           ))}
-        </Box>
-      </RootRef>
+        </InfiniteScroll>
+      </Box>
 
       <Box pl={2} pr={2} mt={1} mb={2} display="flex" justifyContent="space-between">
         <Box mr={2} display="flex" flex={1}>
           <TextField
             className={classes.inputMessage}
+            InputProps={{ disableUnderline: true }}
             autoFocus
             multiline
             rowsMax={4}
-            InputProps={{ disableUnderline: true }}
+            value={newMessage}
+            onChange={handleChangeMessage}
+            onKeyDown={handleChat}
           />
         </Box>
 

@@ -38,6 +38,11 @@ const theme = createMuiTheme({
         },
       },
     },
+    MuiPopover: {
+      paper: {
+        boxShadow: '0 12px 28px 0 rgb(100 83 83 / 20%),0 2px 4px 0 rgba(0, 0, 0, 0.1),inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
+      },
+    },
   },
   shadows,
 });

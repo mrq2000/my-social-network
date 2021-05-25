@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 const UserPage = () => {
   const classes = useStyles();
   const { userId } = useParams();
-  const { data, isLoading } = useUserPage(userId);
+  const { data, isLoading } = useUserPage(Number(userId));
   const [postData, setPostData] = useState([]);
   const { data: me } = useMe();
   const history = useHistory();

@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AddPost = ({ children, ...props }) => {
+const AddPost = ({ children, className, ...props }) => {
   const classes = useStyles();
 
   return (
@@ -19,7 +19,7 @@ const AddPost = ({ children, ...props }) => {
       flexDirection="column"
       bgcolor="background.paper"
       p={2}
-      className={classes.container}
+      className={[classes.container, className].join(' ')}
       {...props}
     >
       {children}
@@ -27,8 +27,13 @@ const AddPost = ({ children, ...props }) => {
   );
 };
 
+AddPost.defaultProps = {
+  className: '',
+};
+
 AddPost.propTypes = {
   children: PropTypes.node.isRequired,
+  className: PropTypes.string,
 };
 
 export default AddPost;

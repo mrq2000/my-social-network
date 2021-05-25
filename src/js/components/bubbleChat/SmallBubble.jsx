@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import CloseIcon from '@material-ui/icons/Close';
 
+import useUserInfo from '../../queries/useUserInfo';
+
 const useStyles = makeStyles((theme) => ({
   container: {
     position: 'relative',
@@ -32,9 +34,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SmallBubble = ({ handleClose, handleAddUserChatting, userInfo }) => {
+const SmallBubble = ({ handleClose, handleAddUserChatting, userId }) => {
   const classes = useStyles();
   const [isHover, setIsHover] = useState(false);
+
+  const { data: userInfo } = useUserInfo(userId);
 
   return (
     <Box
@@ -43,13 +47,17 @@ const SmallBubble = ({ handleClose, handleAddUserChatting, userInfo }) => {
       onMouseLeave={() => setIsHover(false)}
     >
       {isHover && (
-        <Box onClick={handleClose} display="flex" justifyContent="center" alignItems="center" className={classes.removeIconContainer}>
+        <Box onClick={() => handleClose(userId)} display="flex" justifyContent="center" alignItems="center" className={classes.removeIconContainer}>
           <CloseIcon className={classes.fontCloseIcon} />
         </Box>
       )}
 
-      <Box display="flex" onClick={() => handleAddUserChatting(userInfo)}>
-        <img src={userInfo.avatar_name} alt="avatar" className={classes.friendAvatar} />
+      <Box display="flex" onClick={() => handleAddUserChatting(userId)}>
+        {
+          userInfo
+            ? <img src={userInfo.avatar_name} alt="avatar" className={classes.friendAvatar} />
+            : <Box className={classes.friendAvatar} />
+        }
       </Box>
     </Box>
   );
@@ -58,7 +66,7 @@ const SmallBubble = ({ handleClose, handleAddUserChatting, userInfo }) => {
 SmallBubble.propTypes = {
   handleClose: PropTypes.func.isRequired,
   handleAddUserChatting: PropTypes.func.isRequired,
-  userInfo: PropTypes.object.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 export default SmallBubble;

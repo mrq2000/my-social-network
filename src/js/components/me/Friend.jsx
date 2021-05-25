@@ -60,7 +60,7 @@ const Friend = ({ data }) => {
 
       <Box display="flex" justifyContent="space-between" mt={1}>
         { data.data.map((friend) => (
-          <Box width="30%">
+          <Box width="30%" key={friend.id}>
             <Box className={classes.aspect1_1}>
               <Box className={classes.avatar_container} onClick={() => history.push(`/users/${friend.id}`)}>
                 <img src={friend.avatar_name} alt="friendPhoto" className={classes.avatar} />

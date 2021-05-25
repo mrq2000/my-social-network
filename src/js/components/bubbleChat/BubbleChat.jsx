@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, IconButton, Tooltip } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
@@ -6,8 +6,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import NewMessage from './NewMessage';
 import ChattingBox from './ChattingBox';
 import SmallBubble from './SmallBubble';
-
-import useUserList from '../../queries/useUserList';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,44 +27,45 @@ const BubbleChat = () => {
   const [userChattingIds, setUserChatting] = useState(window.localStorage.getItem('userChatIds') ? JSON.parse(window.localStorage.getItem('userChatIds')) : []);
   const [userSmallChatIds, setUserSmallChat] = useState(window.localStorage.getItem('userSmallChatIds') ? JSON.parse(window.localStorage.getItem('userSmallChatIds')) : []);
 
-  const { data: userSmallChat } = useUserList(userSmallChatIds);
-
   // new message
-  const handleOpenNewMessage = () => {
+  const handleOpenNewMessage = useCallback(() => {
     setOpenNewMessage(!openNewMessage);
-  };
+  }, [openNewMessage]);
 
-  const handleCloseNewMessage = () => {
+  const handleCloseNewMessage = useCallback(() => {
     setOpenNewMessage(false);
-  };
+  }, []);
 
   // current chatting
-  const handleCloseChatBox = (id) => {
+  const handleCloseChatBox = useCallback((id) => {
     const newUserIds = userChattingIds.filter((userId) => userId !== id);
     setUserChatting(newUserIds);
     localStorage.setItem('userChatIds', JSON.stringify(newUserIds));
-  };
+  }, [userChattingIds]);
 
-  const handleAddUserChatting = (friendInfo) => {
-    const cloneUser = [...new Set([...userChattingIds, friendInfo.id])];
+  const handleAddUserChatting = useCallback((id) => {
+    const cloneUser = [...new Set([...userChattingIds, id])];
     localStorage.setItem('userChatIds', JSON.stringify(cloneUser));
     setUserChatting(cloneUser);
-  };
+  }, [userChattingIds]);
 
   // small chat
-  const handleClosedSmallChat = (id) => {
+  const handleClosedSmallChat = useCallback((id) => {
     const newUserIds = userSmallChatIds.filter((userId) => userId !== id);
     setUserSmallChat(newUserIds);
     localStorage.setItem('userSmallChatIds', JSON.stringify(newUserIds));
-  };
+  }, [userSmallChatIds]);
 
-  const handleAddUserSmallChat = (id) => {
+  const handleAddUserSmallChat = useCallback((id) => {
     handleCloseChatBox(id);
 
     const cloneUser = [...new Set([...userSmallChatIds, id])];
     localStorage.setItem('userSmallChatIds', JSON.stringify(cloneUser));
     setUserSmallChat(cloneUser);
-  };
+  }, [handleCloseChatBox, userSmallChatIds]);
+
+  useEffect(() => {
+  }, [userSmallChatIds]);
 
   return (
     <div className={classes.container}>
@@ -75,8 +74,8 @@ const BubbleChat = () => {
           <Box mr={3} key={id}>
             <ChattingBox
               userId={id}
-              handleClose={() => handleCloseChatBox(id)}
-              handleAddUserSmallChat={() => handleAddUserSmallChat(id)}
+              handleClose={handleCloseChatBox}
+              handleAddUserSmallChat={handleAddUserSmallChat}
             />
           </Box>
         ))}
@@ -91,12 +90,12 @@ const BubbleChat = () => {
         )}
 
         <Box display="flex" flexDirection="column">
-          {userSmallChat && userSmallChat.map((user) => (
-            <Box mb={1} key={user.id}>
+          {userSmallChatIds && userSmallChatIds.map((userId) => (
+            <Box mb={1} key={userId}>
               <SmallBubble
-                userInfo={user}
+                userId={userId}
                 handleAddUserChatting={handleAddUserChatting}
-                handleClose={() => handleClosedSmallChat(user.id)}
+                handleClose={handleClosedSmallChat}
               />
             </Box>
           ))}

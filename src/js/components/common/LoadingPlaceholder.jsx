@@ -14,13 +14,14 @@ LoadingPlaceholder.defaultProps = {
   className: '',
   height: '100%',
   width: '100%',
+  children: null,
 };
 
 LoadingPlaceholder.propTypes = {
   height: PropTypes.number,
   width: PropTypes.number,
   className: PropTypes.string,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
 };
 
 export default LoadingPlaceholder;

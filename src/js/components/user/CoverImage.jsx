@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Box, Typography, Divider,
+  Box, Typography, Divider, Button,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import Swal from 'sweetalert2';
+
+import useMe from '../../queries/useMe';
+import friendRequestStatus from '../../enums/friendRequestStatus';
+import { useAppStateContext } from '../../AppContext';
+import { getToken } from '../../helpers/storage';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -83,10 +89,100 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '60rem',
     marginTop: theme.spacing(2),
   },
+  font16: {
+    fontSize: 16,
+  },
+  primaryBtn: {
+    color: '#fff',
+    fontSize: 16,
+  },
 }));
 
 const CoverImage = ({ data }) => {
   const classes = useStyles();
+  const { data: me } = useMe();
+  const [requestInfo, setRequestInfo] = useState(data.friendStatus);
+
+  const { currentSocket } = useAppStateContext();
+
+  const handleAddFriend = () => {
+    currentSocket.emit('newFriendRequest',
+      { token: getToken(), userId: data.id },
+      (isSuccess) => {
+        if (isSuccess) {
+          setRequestInfo({
+            status: friendRequestStatus.REQUEST,
+            sender_id: me.id,
+          });
+        } else {
+          Swal.fire('Oops...', 'Something went wrong!', 'error');
+        }
+      });
+  };
+
+  const handleAcceptFriend = () => {
+    currentSocket.emit('acceptFriendRequest',
+      { token: getToken(), userId: data.id },
+      (isSuccess) => {
+        if (isSuccess) {
+          setRequestInfo({
+            status: friendRequestStatus.ACCEPTED,
+            sender_id: me.id,
+          });
+        } else {
+          Swal.fire('Oops...', 'Something went wrong!', 'error');
+        }
+      });
+  };
+
+  const renderFriendRequest = () => {
+    if (!requestInfo) {
+      return (
+        <Button variant="contained" color="primary" className={classes.primaryBtn} onClick={handleAddFriend}>
+          Gửi lời mời kết bạn
+        </Button>
+      );
+    }
+
+    if (requestInfo.status === friendRequestStatus.ACCEPTED) {
+      return (
+        <>Bạn Bè</>
+      );
+    }
+
+    if (me.id === requestInfo.sender_id) {
+      if (requestInfo.status === friendRequestStatus.REQUEST) {
+        return (
+          <>Đã gửi lời mời kết bạn</>
+        );
+      }
+    }
+
+    if (me.id === requestInfo.receiver_id) {
+      if (requestInfo.status === friendRequestStatus.REQUEST) {
+        return (
+          <>
+            <Box mr={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                className={[classes.primaryBtn, classes.font16].join(' ')}
+                onClick={handleAcceptFriend}
+              >
+                Chấp nhận
+              </Button>
+            </Box>
+
+            <Button variant="contained" className={[classes.font16].join(' ')}>
+              Từ chối
+            </Button>
+          </>
+        );
+      }
+    }
+
+    return <></>;
+  };
 
   return (
     <>
@@ -109,6 +205,10 @@ const CoverImage = ({ data }) => {
 
         <Box className={classes.slogan} mt={1}>
           {data.slogan}
+        </Box>
+
+        <Box mt={1} display="flex" className={classes.font16}>
+          {renderFriendRequest()}
         </Box>
 
         <Divider className={classes.divider} />
